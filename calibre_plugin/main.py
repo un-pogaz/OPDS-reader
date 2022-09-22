@@ -41,8 +41,11 @@ class OpdsDialog(QDialog):
         self.setWindowTitle('OPDS Client')
         self.setWindowIcon(icon)
 
+        buttonColumnNumber = 7
+        buttonColumnWidths = []
         labelColumnWidths = []
 
+        # Selection
         self.opdsUrlLabel = QLabel('OPDS URL: ')
         self.layout.addWidget(self.opdsUrlLabel, 0, 0)
         labelColumnWidths.append(self.layout.itemAtPosition(0, 0).sizeHint().width())
@@ -56,13 +59,11 @@ class OpdsDialog(QDialog):
         self.layout.addWidget(self.opdsUrlEditor, 0, 1, 1, 3)
         self.opdsUrlLabel.setBuddy(self.opdsUrlEditor)
 
-        buttonColumnNumber = 7
-        buttonColumnWidths = []
-        self.about_button = QPushButton('About', self)
-        self.about_button.setAutoDefault(False)
-        self.about_button.clicked.connect(self.about)
-        self.layout.addWidget(self.about_button, 0, buttonColumnNumber)
-        buttonColumnWidths.append(self.layout.itemAtPosition(0, buttonColumnNumber).sizeHint().width()) 
+        self.download_opds_button = QPushButton('Load OPDS', self)
+        self.download_opds_button.setAutoDefault(False)
+        self.download_opds_button.clicked.connect(self.download_opds)
+        self.layout.addWidget(self.download_opds_button, 0, buttonColumnNumber)
+        buttonColumnWidths.append(self.layout.itemAtPosition(0, buttonColumnNumber).sizeHint().width())
 
         # Initially download the catalogs found in the root catalog of the URL
         # selected at startup.  Fail quietly on failing to open the URL
@@ -82,11 +83,11 @@ class OpdsDialog(QDialog):
         self.opdsCatalogSelector.setCurrentText(firstCatalogTitle)
         self.layout.addWidget(self.opdsCatalogSelector, 1, 1, 1, 3)
 
-        self.download_opds_button = QPushButton('Download OPDS', self)
-        self.download_opds_button.setAutoDefault(False)
-        self.download_opds_button.clicked.connect(self.download_opds)
-        self.layout.addWidget(self.download_opds_button, 1, buttonColumnNumber)
-        buttonColumnWidths.append(self.layout.itemAtPosition(1, buttonColumnNumber).sizeHint().width()) 
+        self.catalog_url_button = QPushButton('Catalog to URL', self)
+        self.catalog_url_button.setAutoDefault(False)
+        self.catalog_url_button.clicked.connect(self.catalog_to_url)
+        self.layout.addWidget(self.catalog_url_button, 1, buttonColumnNumber)
+        buttonColumnWidths.append(self.layout.itemAtPosition(1, buttonColumnNumber).sizeHint().width())
 
         # Search GUI
         self.searchEditor = QLineEdit(self)
@@ -99,6 +100,12 @@ class OpdsDialog(QDialog):
         self.layout.addWidget(self.searchButton, 2, buttonColumnNumber)
         buttonColumnWidths.append(self.layout.itemAtPosition(2, buttonColumnNumber).sizeHint().width())
 
+        self.about_button = QPushButton('About', self)
+        self.about_button.setAutoDefault(False)
+        self.about_button.clicked.connect(self.about)
+        self.layout.addWidget(self.about_button, 2, 0)
+        buttonColumnWidths.append(self.layout.itemAtPosition(2, 0).sizeHint().width())
+
         # The main book list
         self.library_view = QTableView(self)
         self.library_view.setAlternatingRowColors(True)
@@ -109,33 +116,34 @@ class OpdsDialog(QDialog):
         self.library_view.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.resizeAllLibraryViewLinesToHeaderHeight()
         self.library_view.resizeColumnsToContents()
-        self.layout.addWidget(self.library_view, 3, 0, 3, buttonColumnNumber + 1)
+        self.layout.addWidget(self.library_view, 4, 0, 3, buttonColumnNumber + 1)
 
-        self.hideNewsCheckbox = QCheckBox('Hide Newspapers', self)
-        self.hideNewsCheckbox.clicked.connect(self.setHideNewspapers)
-        self.hideNewsCheckbox.setChecked(prefs['hideNewspapers'])
-        self.layout.addWidget(self.hideNewsCheckbox, 6, 0, 1, 3)
-
+        # Options GUI
         self.hideBooksAlreadyInLibraryCheckbox = QCheckBox('Hide books already in library', self)
         self.hideBooksAlreadyInLibraryCheckbox.clicked.connect(self.setHideBooksAlreadyInLibrary)
         self.hideBooksAlreadyInLibraryCheckbox.setChecked(prefs['hideBooksAlreadyInLibrary'])
         self.layout.addWidget(self.hideBooksAlreadyInLibraryCheckbox, 7, 0, 1, 3)
 
+        self.downloadButton = QPushButton('Download selected books', self)
+        self.downloadButton.setAutoDefault(False)
+        self.downloadButton.clicked.connect(self.downloadSelectedBooks)
+        self.layout.addWidget(self.downloadButton, 7, buttonColumnNumber)
+        buttonColumnWidths.append(self.layout.itemAtPosition(7, buttonColumnNumber).sizeHint().width())
+
+        self.hideNewsCheckbox = QCheckBox('Hide Newspapers', self)
+        self.hideNewsCheckbox.clicked.connect(self.setHideNewspapers)
+        self.hideNewsCheckbox.setChecked(prefs['hideNewspapers'])
+        self.layout.addWidget(self.hideNewsCheckbox, 8, 0, 1, 3)
+
         # Let the checkbox initial state control the filtering
         self.model.setFilterBooksThatAreNewspapers(self.hideNewsCheckbox.isChecked())
         self.model.setFilterBooksThatAreAlreadyInLibrary(self.hideBooksAlreadyInLibraryCheckbox.isChecked())
 
-        self.downloadButton = QPushButton('Download selected books', self)
-        self.downloadButton.setAutoDefault(False)
-        self.downloadButton.clicked.connect(self.downloadSelectedBooks)
-        self.layout.addWidget(self.downloadButton, 6, buttonColumnNumber)
-        buttonColumnWidths.append(self.layout.itemAtPosition(6, buttonColumnNumber).sizeHint().width()) 
-
         self.fixTimestampButton = QPushButton('Fix timestamps of selection', self)
         self.fixTimestampButton.setAutoDefault(False)
         self.fixTimestampButton.clicked.connect(self.fixBookTimestamps)
-        self.layout.addWidget(self.fixTimestampButton, 7, buttonColumnNumber)
-        buttonColumnWidths.append(self.layout.itemAtPosition(7, buttonColumnNumber).sizeHint().width()) 
+        self.layout.addWidget(self.fixTimestampButton, 8, buttonColumnNumber)
+        buttonColumnWidths.append(self.layout.itemAtPosition(8, buttonColumnNumber).sizeHint().width()) 
 
         # Make all columns of the grid layout the same width as the button column
         buttonColumnWidth = max(buttonColumnWidths)
@@ -177,8 +185,7 @@ class OpdsDialog(QDialog):
 
     def download_opds(self):
         opdsCatalogUrl = self.currentOpdsCatalogs.get(self.opdsCatalogSelector.currentText(), None)
-        if opdsCatalogUrl is None:
-            # Just give up quietly
+        if not opdsCatalogUrl:
             return
         self.model.downloadOpdsCatalog(self.gui, opdsCatalogUrl)
         if self.model.isCalibreOpdsServer():
@@ -188,6 +195,13 @@ class OpdsDialog(QDialog):
         self.library_view.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)
         self.resizeAllLibraryViewLinesToHeaderHeight()
         self.resize(self.sizeHint())
+
+    def catalog_to_url(self):
+        opdsCatalogUrl = self.currentOpdsCatalogs.get(self.opdsCatalogSelector.currentText(), None)
+        self.opdsUrlEditor.insertItem(0, opdsCatalogUrl)
+        self.opdsUrlEditor.setCurrentIndex(0)
+        self.opdsUrlEditorActivated(opdsCatalogUrl)
+        self.download_opds()
 
     def config(self):
         self.do_user_config(parent=self)
