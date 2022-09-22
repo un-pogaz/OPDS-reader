@@ -15,6 +15,9 @@ import urllib.request
 import json
 import re
 
+def parse_timestamp(rawTimestamp):
+    parsableTimestamp = re.sub(r'((\.\d+)?(\+|-)0\d:00|Z)$', '', rawTimestamp)
+    return datetime.datetime.strptime(parsableTimestamp, '%Y-%m-%dT%H:%M:%S')
 
 class OpdsBooksModel(QAbstractTableModel):
     column_headers = [_('Title'), _('Author(s)'), _('Updated')]
@@ -149,8 +152,7 @@ class OpdsBooksModel(QAbstractTableModel):
         metadata = Metadata(opdsBookStructure.title, authors.split(u'&'))
         metadata.uuid = opdsBookStructure.id.replace('urn:uuid:', '', 1) if 'id' in opdsBookStructure else ''
         rawTimestamp = opdsBookStructure.updated
-        parsableTimestamp = re.sub(r'((\.[0-9]+)?\+0[0-9]:00|Z)$', '', rawTimestamp)
-        metadata.timestamp = datetime.datetime.strptime(parsableTimestamp, '%Y-%m-%dT%H:%M:%S')
+        metadata.timestamp = parse_timestamp(rawTimestamp)
         tags = []
         summary = opdsBookStructure.get(u'summary', u'')
         summarylines = summary.splitlines()
@@ -226,7 +228,6 @@ class OpdsBooksModel(QAbstractTableModel):
         for book in self.books:
             bookMetadata = bookMetadataById[book.uuid]
             rawTimestamp = bookMetadata['timestamp']
-            parsableTimestamp = re.sub(r'(\.[0-9]+)?\+00:00$', '', rawTimestamp)
-            timestamp = datetime.datetime.strptime(parsableTimestamp, '%Y-%m-%dT%H:%M:%S')
+            timestamp = parse_timestamp(rawTimestamp)
             book.timestamp = timestamp
         self.filterBooks()
