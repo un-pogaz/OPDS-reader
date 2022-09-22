@@ -149,7 +149,7 @@ class OpdsBooksModel(QAbstractTableModel):
         metadata = Metadata(opdsBookStructure.title, authors.split(u'&'))
         metadata.uuid = opdsBookStructure.id.replace('urn:uuid:', '', 1) if 'id' in opdsBookStructure else ''
         rawTimestamp = opdsBookStructure.updated
-        parsableTimestamp = re.sub('((\.[0-9]+)?\+0[0-9]:00|Z)$', '', rawTimestamp)
+        parsableTimestamp = re.sub(r'((\.[0-9]+)?\+0[0-9]:00|Z)$', '', rawTimestamp)
         metadata.timestamp = datetime.datetime.strptime(parsableTimestamp, '%Y-%m-%dT%H:%M:%S')
         tags = []
         summary = opdsBookStructure.get(u'summary', u'')
@@ -172,7 +172,7 @@ class OpdsBooksModel(QAbstractTableModel):
                     # EPUB books are preferred and always put at the head of the list if found
                     bookDownloadUrls.insert(0, url)
                 else:
-                    # Formats other than EPUB (eg. AZW), are appended as they are found
+                    # Formats other than EPUB (like AZW), are appended as they are found
                     bookDownloadUrls.append(url)
         metadata.links = bookDownloadUrls
         return metadata
@@ -226,7 +226,7 @@ class OpdsBooksModel(QAbstractTableModel):
         for book in self.books:
             bookMetadata = bookMetadataById[book.uuid]
             rawTimestamp = bookMetadata['timestamp']
-            parsableTimestamp = re.sub('(\.[0-9]+)?\+00:00$', '', rawTimestamp)
+            parsableTimestamp = re.sub(r'(\.[0-9]+)?\+00:00$', '', rawTimestamp)
             timestamp = datetime.datetime.strptime(parsableTimestamp, '%Y-%m-%dT%H:%M:%S')
             book.timestamp = timestamp
         self.filterBooks()
