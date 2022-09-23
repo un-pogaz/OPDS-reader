@@ -151,6 +151,10 @@ class OpdsDialog(QDialog):
         self.searchEditor.returnPressed.connect(self.searchBookList)
         self.layout.addWidget(self.searchEditor, 2, buttonColumnNumber - 2, 1, 2)
         
+        # Set the stretch on the search bar (and a minimum width)
+        self.layout.setColumnStretch(buttonColumnNumber - 2, 10)
+        self.layout.setColumnMinimumWidth(buttonColumnNumber - 2, 200)
+        
         self.searchButton = QPushButton(_('Search'), self)
         self.searchButton.setAutoDefault(False)
         self.searchButton.clicked.connect(self.searchBookList)
@@ -193,20 +197,13 @@ class OpdsDialog(QDialog):
         self.fixTimestampButton.clicked.connect(self.fixBookTimestamps)
         self.layout.addWidget(self.fixTimestampButton, 8, buttonColumnNumber)
         
-        
-        # Make sure the first column isn't wider than the labels it holds
-        labelColumnWidth = max(labelColumnWidths)
-        self.layout.setColumnMinimumWidth(0, labelColumnWidth)
-        
-        self.layout.setColumnMinimumWidth(buttonColumnNumber - 2, 100)
-        self.layout.setColumnStretch(buttonColumnNumber - 2, 10)
-        
         self.resize(self.sizeHint())
     
     def resizeRowHeight(self):
         rowHeight = self.library_view.horizontalHeader().height()
         for rowNumber in range(0, self.library_view.model().rowCount()):
             self.library_view.setRowHeight(rowNumber, rowHeight)
+        self.library_view.sortByColumn(-1, Qt.AscendingOrder)
     
     def opdsUrlEditorActivated(self, text):
         PREFS[KEY.OPDS_URL] = saveOpdsUrlCombobox(self.opdsUrlEditor)
