@@ -1,0 +1,81 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2022-09-23 19:00+0200\n"
+"PO-Revision-Date: 2022-09-23 19:00+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Poedit 3.1.1\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-SearchPath-0: __init__.py\n"
+"X-Poedit-SearchPath-1: action.py\n"
+"X-Poedit-SearchPath-2: config.py\n"
+
+#: __init__.py:24
+msgid "Import the books from a OPDS catalog"
+msgstr "Importer des livres depuis un catalogue OPDS"
+
+#: action.py:59
+msgid "Run the OPDS client UI"
+msgstr "Exécuter l'interface client OPDS"
+
+#: action.py:122
+msgid "Load OPDS"
+msgstr "Charger OPDS"
+
+#: action.py:135
+msgid "OPDS Catalog:"
+msgstr "Catalogue OPDS :"
+
+#: action.py:146
+msgid "Catalog to URL"
+msgstr "Catalogue vers URL"
+
+#: action.py:157
+msgid "Search"
+msgstr "Cherchez"
+
+#: action.py:181
+msgid "Download selected books"
+msgstr "Télécharger des livres sélectionnés"
+
+#: action.py:196
+msgid "Fix timestamps of selection"
+msgstr "Correction des horodatages de la sélection"
+
+#: action.py:301
+msgid "Title"
+msgstr "Titre"
+
+#: action.py:301
+msgid "Author(s)"
+msgstr "Auteur(s)"
+
+#: action.py:301
+msgid "Updated"
+msgstr "Actualisé"
+
+#: action.py:353
+msgid "Failed opening the OPDS URL {:s}:"
+msgstr "Échec de l'ouverture de l'URL OPDS {:s} :"
+
+#: action.py:355
+msgid "Failed opening the OPDS URL"
+msgstr "Échec de l'ouverture de l'URL OPDS"
+
+#: config.py:31
+msgid "OPDS URL:"
+msgstr "URL OPDS :"
+
+#: config.py:32
+msgid "Hide Newspapers"
+msgstr "Masquer les journaux/actualités"
+
+#: config.py:33
+msgid "Hide books already in library"
+msgstr "Masquer les livres déjà présents dans la bibliothèque"

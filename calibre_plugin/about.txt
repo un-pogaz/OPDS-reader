@@ -1,2 +1,0 @@
-This is a plugin that adds functionality to read the OPDS feed of a
-different Calibre and list and import books into this calibre.
