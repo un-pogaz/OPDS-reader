@@ -18,7 +18,7 @@ class OpdsClient(InterfaceActionBase):
     supported_platforms = ['windows', 'osx', 'linux']
     author = "Steinar Bang"
     version = (1, 0, 10)
-    minimum_calibre_version = (5, 0, 0)
+    minimum_calibre_version = (2, 0, 0)
 
     actual_plugin = 'calibre_plugins.opds_client.ui:OpdsInterfacePlugin'
 

@@ -5,7 +5,10 @@ __copyright__ = "Steinar Bang, 2015-2022"
 __credits__   = ["Steinar Bang"]
 __license__   = "GPL v3"
 
-from PyQt5.Qt import QWidget, QGridLayout, QLabel, QComboBox, QCheckBox
+try:
+    from qt.core import (QWidget, QGridLayout, QLabel, QComboBox, QCheckBox)
+except ImportError:
+    from PyQt5.Qt import (QWidget, QGridLayout, QLabel, QComboBox, QCheckBox)
 
 from calibre.utils.config import JSONConfig
 
