@@ -30,8 +30,6 @@ class ConfigWidget(QWidget):
         self.layout.addWidget(self.opdsUrlLabel, 0, 0)
         labelColumnWidths.append(self.layout.itemAtPosition(0, 0).sizeHint().width())
 
-        print(type(prefs.defaults['opds_url']))
-        print(type(prefs['opds_url']))
         convertSingleStringOpdsUrlPreferenceToListOfStringsPreference()
         self.opdsUrlEditor = QComboBox(self)
         self.opdsUrlEditor.addItems(prefs['opds_url'])
