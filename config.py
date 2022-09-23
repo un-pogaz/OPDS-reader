@@ -60,7 +60,7 @@ def convertSingleStringOpdsUrlPreferenceToListOfStringsPreference():
         PREFS[KEY.OPDS_URL].insert(0, originalUrl)
 
 class ConfigWidget(QWidget):
-    def __init__(self):
+    def __init__(self, plugin_action):
         QWidget.__init__(self)
         self.layout = QGridLayout()
         self.setLayout(self.layout)
