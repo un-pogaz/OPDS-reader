@@ -13,11 +13,13 @@ try:
                         QGridLayout, QLineEdit, QComboBox, QPushButton, QCheckBox, QLabel,
                         QAbstractItemView, QTableView, QHeaderView,
                         QSortFilterProxyModel, QStringListModel)
+    ResizeMode = QHeaderView.ResizeMode
 except ImportError:
     from PyQt5.Qt import (Qt, QDialog, QMessageBox,
                         QGridLayout, QLineEdit, QComboBox, QPushButton, QCheckBox, QLabel,
                         QAbstractItemView, QTableView, QHeaderView,
                         QSortFilterProxyModel, QStringListModel)
+    from PyQt5.Qt import QHeaderView as ResizeMode
 
 from calibre_plugins.opds_client.model import OpdsBooksModel
 from calibre_plugins.opds_client.config import prefs
@@ -119,9 +121,9 @@ class OpdsDialog(QDialog):
         self.library_view = QTableView(self)
         self.library_view.setAlternatingRowColors(True)
         self.library_view.setModel(self.searchproxymodel)
-        self.library_view.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
-        self.library_view.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
-        self.library_view.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.ResizeToContents)
+        self.library_view.horizontalHeader().setSectionResizeMode(0, ResizeMode.Stretch)
+        self.library_view.horizontalHeader().setSectionResizeMode(1, ResizeMode.Stretch)
+        self.library_view.horizontalHeader().setSectionResizeMode(2, ResizeMode.ResizeToContents)
         self.library_view.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.resizeAllLibraryViewLinesToHeaderHeight()
         self.library_view.resizeColumnsToContents()

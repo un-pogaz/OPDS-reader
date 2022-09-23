@@ -25,6 +25,5 @@ class OpdsInterfacePlugin(InterfaceAction):
         d.show()
 
     def apply_settings(self):
-        from config import prefs
-        prefs
+        pass
 
