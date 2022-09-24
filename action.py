@@ -42,7 +42,7 @@ from calibre.gui2.actions import InterfaceAction
 from calibre.gui2 import error_dialog
 from calibre.web.feeds import feedparser
 
-from .config import PREFS, KEY, TEXT, PLUGIN_ICONS, saveOpdsUrlCombobox, convertSingleStringOpdsUrlPreferenceToListOfStringsPreference
+from .config import PREFS, KEY, TEXT, PLUGIN_ICONS, saveOpdsUrlCombobox
 from .common_utils import (debug_print, get_icon, PLUGIN_NAME, load_plugin_resources)
 
 
@@ -109,7 +109,6 @@ class OpdsDialog(QDialog):
         self.layout.addWidget(self.opdsUrlLabel, 0, 0)
         labelColumnWidths.append(self.layout.itemAtPosition(0, 0).sizeHint().width())
         
-        convertSingleStringOpdsUrlPreferenceToListOfStringsPreference()
         self.opdsUrlEditor = QComboBox(self)
         self.opdsUrlEditor.activated.connect(self.opdsUrlEditorActivated)
         self.opdsUrlEditor.addItems(PREFS[KEY.OPDS_URL])

@@ -38,6 +38,9 @@ PREFS.defaults[KEY.OPDS_URL] = ['http://localhost:8080/opds']
 PREFS.defaults[KEY.HIDE_NEWSPAPERS] = True
 PREFS.defaults[KEY.HIDE_BOOK] = True
 
+if PREFS.defaults[KEY.OPDS_URL][0] not in PREFS[KEY.OPDS_URL]:
+    PREFS[KEY.OPDS_URL] = PREFS[KEY.OPDS_URL] + PREFS.defaults[KEY.OPDS_URL]
+
 def saveOpdsUrlCombobox(opdsUrlEditor):
     opdsUrls = []
     debug_print('item count: {:d}'.format(opdsUrlEditor.count()))
@@ -52,13 +55,6 @@ def saveOpdsUrlCombobox(opdsUrlEditor):
         opdsUrls.insert(0, currentUrl)
     return opdsUrls
 
-def convertSingleStringOpdsUrlPreferenceToListOfStringsPreference():
-    if type(PREFS[KEY.OPDS_URL]) != type(PREFS.defaults[KEY.OPDS_URL]):
-        # Upgrade config option from single string to list of strings
-        originalUrl = PREFS[KEY.OPDS_URL]
-        PREFS[KEY.OPDS_URL] = PREFS.defaults[KEY.OPDS_URL]
-        PREFS[KEY.OPDS_URL].insert(0, originalUrl)
-
 class ConfigWidget(QWidget):
     def __init__(self, plugin_action):
         QWidget.__init__(self)
@@ -70,7 +66,6 @@ class ConfigWidget(QWidget):
         self.layout.addWidget(self.opdsUrlLabel, 0, 0)
         labelColumnWidths.append(self.layout.itemAtPosition(0, 0).sizeHint().width())
         
-        convertSingleStringOpdsUrlPreferenceToListOfStringsPreference()
         self.opdsUrlEditor = QComboBox(self)
         self.opdsUrlEditor.addItems(PREFS[KEY.OPDS_URL])
         self.opdsUrlEditor.setEditable(True)
