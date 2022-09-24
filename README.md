@@ -33,7 +33,7 @@ This tool is useful to backup your book collection between two PCs using your ho
             - Note: if no books appear, try unchecking the "Hide books already in the library" checkbox. If that makes a lot of books appear, it means that the two Calibre instances have the same books
         4. select the books you wish to copy into the current Calibre and click the "Download selected books"
             - Calibre will start downloading and installing the books:
-            - The Jobs counter in Calibre's lower right corner, will show a decrementing number and the icon will spin
-            - The book list will be updated as the books are downloaded
+                - The Jobs counter in Calibre's lower right corner, will show a decrementing number and the icon will spin
+                - The book list will be updated as the books are downloaded
         5. The downloaded books will be in approximately the same order as in the original, but the time stamp will be the download time. To fix the time stamp, click on the "Fixtimestamps of the selection" button
             - The updated timestamps may not show up immediatly, but they will show up after the first update of the display, and the books will be ordered according to the timestamp after stopping and starting Calibre
