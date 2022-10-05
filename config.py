@@ -20,7 +20,7 @@ except ImportError:
 from calibre import prints
 from .common_utils import debug_print, get_icon, PLUGIN_NAME, PREFS_json
 
-PLUGIN_ICONS = ['images/plugin.png']
+PLUGIN_ICON = 'images/plugin.png'
 
 class KEY:
     OPDS_URL = 'opds_url'

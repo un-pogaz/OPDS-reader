@@ -42,7 +42,7 @@ from calibre.gui2.actions import InterfaceAction
 from calibre.gui2 import error_dialog
 from calibre.web.feeds import feedparser
 
-from .config import PREFS, KEY, TEXT, PLUGIN_ICONS, saveOpdsUrlCombobox
+from .config import PREFS, KEY, TEXT, PLUGIN_ICON, saveOpdsUrlCombobox
 from .common_utils import (debug_print, get_icon, PLUGIN_NAME, load_plugin_resources)
 
 
@@ -65,9 +65,9 @@ class OpdsReaderAction(InterfaceAction):
         self.is_library_selected = True
         
         # Read the plugin icons and store for potential sharing with the config widget
-        load_plugin_resources(self.plugin_path, PLUGIN_ICONS)
+        load_plugin_resources(self.plugin_path)
         
-        self.qaction.setIcon(get_icon(PLUGIN_ICONS[0]))
+        self.qaction.setIcon(get_icon(PLUGIN_ICON))
         self.qaction.triggered.connect(self.show_dialog)
     
     def show_dialog(self):
