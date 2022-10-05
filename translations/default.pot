@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2022-09-23 19:00+0200\n"
+"POT-Creation-Date: 2022-10-05 02:30+0200\n"
 "PO-Revision-Date: 2020-10-12 14:49+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -17,7 +17,7 @@ msgstr ""
 "X-Poedit-SearchPath-1: action.py\n"
 "X-Poedit-SearchPath-2: config.py\n"
 
-#: __init__.py:24
+#: __init__.py:28
 msgid "Import the books from a OPDS catalog"
 msgstr ""
 
@@ -25,15 +25,15 @@ msgstr ""
 msgid "Run the OPDS client UI"
 msgstr ""
 
-#: action.py:122
+#: action.py:120
 msgid "Load OPDS"
 msgstr ""
 
-#: action.py:135
+#: action.py:132
 msgid "OPDS Catalog:"
 msgstr ""
 
-#: action.py:146
+#: action.py:143
 msgid "Catalog to URL"
 msgstr ""
 
@@ -41,31 +41,31 @@ msgstr ""
 msgid "Search"
 msgstr ""
 
-#: action.py:181
+#: action.py:180
 msgid "Download selected books"
 msgstr ""
 
-#: action.py:196
+#: action.py:194
 msgid "Fix timestamps of selection"
 msgstr ""
 
-#: action.py:301
+#: action.py:289
 msgid "Title"
 msgstr ""
 
-#: action.py:301
+#: action.py:289
 msgid "Author(s)"
 msgstr ""
 
-#: action.py:301
+#: action.py:289
 msgid "Updated"
 msgstr ""
 
-#: action.py:353
+#: action.py:341
 msgid "Failed opening the OPDS URL {:s}:"
 msgstr ""
 
-#: action.py:355
+#: action.py:343
 msgid "Failed opening the OPDS URL"
 msgstr ""
 
