@@ -1,3 +1,6 @@
+### version 2.1.0
+[internal] big rework of common_utils.py
+
 ### version 2.0.0
 Fork from [steinarb/opds-reader](https://github.com/steinarb/opds-reader)
 Refactoring to un_pogaz format
