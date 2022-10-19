@@ -1,3 +1,6 @@
+### version 2.2.0
+[internal] again, big rework of common_utils (use submodule)
+
 ### version 2.1.0
 [internal] big rework of common_utils.py
 

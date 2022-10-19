@@ -43,7 +43,7 @@ from calibre.gui2 import error_dialog
 from calibre.web.feeds import feedparser
 
 from .config import PREFS, KEY, TEXT, PLUGIN_ICON, saveOpdsUrlCombobox
-from .common_utils import (debug_print, get_icon, PLUGIN_NAME, load_plugin_resources)
+from .common_utils import debug_print, get_icon, PLUGIN_NAME, load_plugin_resources
 
 
 def parse_timestamp(rawTimestamp):

@@ -13,9 +13,9 @@ except NameError:
     pass # load_translations() added in calibre 1.9
 
 try:
-    from qt.core import (QWidget, QGridLayout, QLabel, QComboBox, QCheckBox)
+    from qt.core import QWidget, QGridLayout, QLabel, QComboBox, QCheckBox
 except ImportError:
-    from PyQt5.Qt import (QWidget, QGridLayout, QLabel, QComboBox, QCheckBox)
+    from PyQt5.Qt import QWidget, QGridLayout, QLabel, QComboBox, QCheckBox
 
 from calibre import prints
 from .common_utils import debug_print, get_icon, PLUGIN_NAME, PREFS_json
