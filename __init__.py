@@ -28,7 +28,7 @@ class ActionOpdsReader(InterfaceActionBase):
     description = _('Import the books from a OPDS catalog')
     supported_platforms = ['windows', 'osx', 'linux']
     author = 'Steinar Bang & un_pogaz'
-    version = (2, 2, 0)
+    version = (2, 2, 1)
     minimum_calibre_version = (2, 0, 0)
     
     actual_plugin = __name__+'.action:OpdsReaderAction'

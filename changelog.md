@@ -1,5 +1,10 @@
 # Changelog - OPDS Reader
 
+## [2.2.1] - 2022/10/20
+
+### Changed
+- Don't update the config file when Calibre start
+
 ## [2.2.0] - 2022/10/20
 
 ### Changed
