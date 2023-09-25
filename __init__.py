@@ -7,12 +7,15 @@ __license__   = 'GPL v3'
 __copyright__ = '2015, Steinar Bang ; 2020, un_pogaz <un.pogaz@gmail.com>'
 __docformat__ = 'restructuredtext en'
 
+
 try:
     load_translations()
 except NameError:
     pass # load_translations() added in calibre 1.9
 
+# The class that all Interface Action plugin wrappers must inherit from
 from calibre.customize import InterfaceActionBase
+
 
 class ActionOpdsReader(InterfaceActionBase):
     '''

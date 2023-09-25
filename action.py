@@ -7,6 +7,7 @@ __license__   = 'GPL v3'
 __copyright__ = '2015, Steinar Bang ; 2020, un_pogaz <un.pogaz@gmail.com>'
 __docformat__ = 'restructuredtext en'
 
+
 try:
     load_translations()
 except NameError:
@@ -24,19 +25,22 @@ except ImportError:
     from urlparse import urlparse, ParseResult
 
 try:
-    from qt.core import (Qt, QToolButton, QDialog, QMessageBox,
-                        QGridLayout, QLineEdit, QComboBox, QPushButton, QCheckBox, QLabel,
-                        QAbstractItemView, QTableView, QHeaderView,
-                        QSortFilterProxyModel, QStringListModel, QAbstractTableModel, QCoreApplication)
+    from qt.core import (
+        Qt, QAbstractItemView, QAbstractTableModel, QCheckBox,
+        QComboBox, QCoreApplication, QDialog, QGridLayout, QHeaderView, QLabel,
+        QLineEdit, QPushButton, QSortFilterProxyModel, QStringListModel, QTableView,
+        QToolButton,
+    )
     ResizeMode = QHeaderView.ResizeMode
 except ImportError:
-    from PyQt5.Qt import (Qt, QToolButton, QDialog, QMessageBox,
-                        QGridLayout, QLineEdit, QComboBox, QPushButton, QCheckBox, QLabel,
-                        QAbstractItemView, QTableView, QHeaderView,
-                        QSortFilterProxyModel, QStringListModel, QAbstractTableModel, QCoreApplication)
+    from PyQt5.Qt import (
+        Qt, QAbstractItemView, QAbstractTableModel, QCheckBox,
+        QComboBox, QCoreApplication, QDialog, QGridLayout, QHeaderView, QLabel,
+        QLineEdit, QPushButton, QSortFilterProxyModel, QStringListModel, QTableView,
+        QToolButton,
+    )
     from PyQt5.Qt import QHeaderView as ResizeMode
 
-from calibre import prints
 from calibre.ebooks.metadata.book.base import Metadata
 from calibre.gui2.actions import InterfaceAction
 from calibre.gui2 import error_dialog
@@ -221,7 +225,7 @@ class OpdsDialog(QDialog):
     
     def searchBookList(self):
         searchString = self.searchEditor.text()
-        debug_print('Starting book list search for: {:s}'.format(searchString))
+        debug_print('Starting book list search for:', searchString)
         self.searchproxymodel.setFilterFixedString(searchString)
     
     def download_opds(self):
@@ -270,7 +274,7 @@ class OpdsDialog(QDialog):
         for identicalBookId in identicalBookIds:
             bookIdToValMap[identicalBookId] = bookTimestamp
         if len(bookIdToValMap) < 1:
-            debug_print('Failed to set timestamp of book: {:s}'.format(book))
+            debug_print('Failed to set timestamp of book:', book)
         self.db.set_field('timestamp', bookIdToValMap)
     
     def findIdenticalBooksForBooksWithMultipleAuthors(self, book):
@@ -343,8 +347,8 @@ class OpdsBooksModel(QAbstractTableModel):
             error_dialog(gui, _('Failed opening the OPDS URL'), message, reason, displayDialogOnErrors)
             return (None, {})
         self.serverHeader = feed.headers['server']
-        debug_print('serverHeader: {:s}'.format(self.serverHeader))
-        debug_print('feed.entries: {:d} {}'.format(len(feed.entries), [e['title'] for e in feed.entries]))
+        debug_print('serverHeader:', self.serverHeader)
+        debug_print('feed.entries:', len(feed.entries), [e['title'] for e in feed.entries])
         catalogEntries = {}
         firstTitle = None
         for entry in feed.entries:
@@ -359,7 +363,7 @@ class OpdsBooksModel(QAbstractTableModel):
         return firstTitle, catalogEntries
     
     def downloadOpdsCatalog(self, gui, opdsCatalogUrl):
-        debug_print('Downloading catalog: {:s}'.format(opdsCatalogUrl))
+        debug_print('Downloading catalog:', opdsCatalogUrl)
         opdsCatalogFeed = feedparser.parse(opdsCatalogUrl)
         self.books = self.makeMetadataFromParsedOpds(opdsCatalogFeed.entries)
         self.filterBooks()
@@ -495,4 +499,3 @@ class OpdsBooksModel(QAbstractTableModel):
             timestamp = parse_timestamp(rawTimestamp)
             book.timestamp = timestamp
         self.filterBooks()
-

@@ -7,18 +7,23 @@ __license__   = 'GPL v3'
 __copyright__ = '2015, Steinar Bang ; 2020, un_pogaz <un.pogaz@gmail.com>'
 __docformat__ = 'restructuredtext en'
 
+
 try:
     load_translations()
 except NameError:
     pass # load_translations() added in calibre 1.9
 
 try:
-    from qt.core import QWidget, QGridLayout, QLabel, QComboBox, QCheckBox
+    from qt.core import (
+        QCheckBox, QComboBox, QGridLayout, QLabel, QWidget,
+    )
 except ImportError:
-    from PyQt5.Qt import QWidget, QGridLayout, QLabel, QComboBox, QCheckBox
+    from PyQt5.Qt import (
+        QCheckBox, QComboBox, QGridLayout, QLabel, QWidget,
+    )
 
-from calibre import prints
 from .common_utils import debug_print, get_icon, PLUGIN_NAME, PREFS_json
+
 
 PLUGIN_ICON = 'images/plugin.png'
 
@@ -43,7 +48,7 @@ if PREFS.defaults[KEY.OPDS_URL][0] not in PREFS[KEY.OPDS_URL]:
 
 def saveOpdsUrlCombobox(opdsUrlEditor):
     opdsUrls = []
-    debug_print('item count: {:d}'.format(opdsUrlEditor.count()))
+    debug_print('item count:', opdsUrlEditor.count())
     for i in range(opdsUrlEditor.count()):
         debug_print('item {:d}: {:s}'.format(i, opdsUrlEditor.itemText(i)))
         opdsUrls.append(opdsUrlEditor.itemText(i))
