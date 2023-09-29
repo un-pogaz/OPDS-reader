@@ -32,11 +32,10 @@ class ActionOpdsReader(InterfaceActionBase):
     supported_platforms = ['windows', 'osx', 'linux']
     author = 'Steinar Bang & un_pogaz'
     version = (2, 2, 1)
-    minimum_calibre_version = (2, 0, 0)
+    minimum_calibre_version = (4, 0, 0)
     
     actual_plugin = __name__+'.action:OpdsReaderAction'
     
-    DEBUG_PRE = 'OPDSreader'
     
     def is_customizable(self):
         '''
@@ -69,7 +68,7 @@ class ActionOpdsReader(InterfaceActionBase):
         # from the command line
         if self.actual_plugin_:
             from .config import ConfigWidget
-            return ConfigWidget(self.actual_plugin_)
+            return ConfigWidget()
     
     def save_settings(self, config_widget):
         '''

@@ -61,7 +61,7 @@ def saveOpdsUrlCombobox(opdsUrlEditor):
     return opdsUrls
 
 class ConfigWidget(QWidget):
-    def __init__(self, plugin_action):
+    def __init__(self):
         QWidget.__init__(self)
         self.layout = QGridLayout()
         self.setLayout(self.layout)
