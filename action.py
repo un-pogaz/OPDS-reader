@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from __future__ import (unicode_literals, division, absolute_import,
-                        print_function)
 
 __license__   = 'GPL v3'
 __copyright__ = '2015, Steinar Bang ; 2020, un_pogaz <un.pogaz@gmail.com>'
@@ -354,7 +352,7 @@ class OpdsBooksModel(QAbstractTableModel):
             links = entry.get('links', [])
             firstLink = next(iter(links), None)
             if firstLink is not None:
-                debug_print('firstLink: {:s} "{:s}"'.format(title, firstLink.href))
+                debug_print(f'firstLink: {title} "{firstLink.href}"')
                 catalogEntries[title] = firstLink.href
         return firstTitle, catalogEntries
     

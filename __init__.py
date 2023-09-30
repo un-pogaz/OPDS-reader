@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from __future__ import (unicode_literals, division, absolute_import,
-                        print_function)
 
 __license__   = 'GPL v3'
 __copyright__ = '2015, Steinar Bang ; 2020, un_pogaz <un.pogaz@gmail.com>'
@@ -31,8 +29,8 @@ class ActionOpdsReader(InterfaceActionBase):
     description = _('Import the books from a OPDS catalog')
     supported_platforms = ['windows', 'osx', 'linux']
     author = 'Steinar Bang & un_pogaz'
-    version = (2, 2, 1)
-    minimum_calibre_version = (4, 0, 0)
+    version = (2, 2, 2)
+    minimum_calibre_version = (5, 0, 0)
     
     actual_plugin = __name__+'.action:OpdsReaderAction'
     
