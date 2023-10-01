@@ -20,6 +20,7 @@ except ImportError:
         QCheckBox, QComboBox, QGridLayout, QLabel, QWidget,
     )
 
+from typing import List
 from .common_utils import debug_print, get_icon, PLUGIN_NAME, PREFS_json
 
 
@@ -44,7 +45,7 @@ PREFS.defaults[KEY.HIDE_BOOK] = True
 if PREFS.defaults[KEY.OPDS_URL][0] not in PREFS[KEY.OPDS_URL]:
     PREFS[KEY.OPDS_URL] = PREFS[KEY.OPDS_URL] + PREFS.defaults[KEY.OPDS_URL]
 
-def saveOpdsUrlCombobox(opdsUrlEditor):
+def saveOpdsUrlCombobox(opdsUrlEditor) -> List[str]:
     opdsUrls = []
     debug_print('item count:', opdsUrlEditor.count())
     for i in range(opdsUrlEditor.count()):

@@ -11,21 +11,20 @@ try:
 except NameError:
     pass # load_translations() added in calibre 1.9
 
-import sys, json, re, datetime
+import sys
+import json
+import re
+import datetime
+from typing import Dict, List, Tuple
 
-try:
-    # For Python 3.0 and later
-    from urllib.request import urlopen
-    from urllib.parse import urlparse, ParseResult
-except ImportError:
-    # Fall back to Python 2's urllib2
-    from urllib2 import urlopen
-    from urlparse import urlparse, ParseResult
+# For Python 3.0 and later
+from urllib.request import urlopen
+from urllib.parse import urlparse, ParseResult
 
 try:
     from qt.core import (
         Qt, QAbstractItemView, QAbstractTableModel, QCheckBox,
-        QComboBox, QCoreApplication, QDialog, QGridLayout, QHeaderView, QLabel,
+        QComboBox, QCoreApplication, QGridLayout, QHeaderView, QLabel,
         QLineEdit, QPushButton, QSortFilterProxyModel, QStringListModel, QTableView,
         QToolButton,
     )
@@ -33,19 +32,21 @@ try:
 except ImportError:
     from PyQt5.Qt import (
         Qt, QAbstractItemView, QAbstractTableModel, QCheckBox,
-        QComboBox, QCoreApplication, QDialog, QGridLayout, QHeaderView, QLabel,
+        QComboBox, QCoreApplication, QGridLayout, QHeaderView, QLabel,
         QLineEdit, QPushButton, QSortFilterProxyModel, QStringListModel, QTableView,
         QToolButton,
     )
     from PyQt5.Qt import QHeaderView as ResizeMode
 
 from calibre.ebooks.metadata.book.base import Metadata
+from calibre.db.cache import Cache
 from calibre.gui2.actions import InterfaceAction
 from calibre.gui2 import error_dialog
+from calibre.gui2.widgets2 import Dialog
 from calibre.web.feeds import feedparser
 
 from .config import PREFS, KEY, TEXT, PLUGIN_ICON, saveOpdsUrlCombobox
-from .common_utils import debug_print, get_icon, PLUGIN_NAME
+from .common_utils import debug_print, get_icon, PLUGIN_NAME, GUI, current_db
 
 
 def parse_timestamp(rawTimestamp):
@@ -71,23 +72,29 @@ class OpdsReaderAction(InterfaceAction):
     def show_dialog(self):
         base_plugin_object = self.interface_action_base_plugin
         do_user_config = base_plugin_object.do_user_config
-        d = OpdsDialog(self.gui, self.qaction.icon(), do_user_config)
+        d = OpdsDialog(self.gui, do_user_config)
         d.show()
     
     def apply_settings(self):
         pass
 
 
-class OpdsDialog(QDialog):
-    def __init__(self, gui, icon, do_user_config):
-        QDialog.__init__(self, gui)
+class OpdsDialog(Dialog):
+    def __init__(self, gui, do_user_config):
         self.gui = gui
         self.do_user_config = do_user_config
         
-        self.db = gui.current_db.new_api
+        self.dbAPI = current_db().new_api
         
+        Dialog.__init__(self,
+            title='OPDS Reader',
+            name='plugin.OPDSreader:opds_reader',
+            parent=GUI,
+        )
+    
+    def setup_ui(self):
         # The model for the book list
-        self.model = OpdsBooksModel(None, [], self.db)
+        self.model = OpdsBooksModel(None, [], self.dbAPI)
         self.searchproxymodel = QSortFilterProxyModel(self)
         self.searchproxymodel.setFilterCaseSensitivity(Qt.CaseInsensitive)
         self.searchproxymodel.setFilterKeyColumn(-1)
@@ -96,8 +103,7 @@ class OpdsDialog(QDialog):
         self.layout = QGridLayout()
         self.setLayout(self.layout)
         
-        self.setWindowTitle('OPDS Reader')
-        self.setWindowIcon(icon)
+        self.setWindowIcon(get_icon(PLUGIN_ICON))
         
         buttonColumnNumber = 7
         labelColumnWidths = []
@@ -269,17 +275,17 @@ class OpdsDialog(QDialog):
             bookIdToValMap[identicalBookId] = bookTimestamp
         if len(bookIdToValMap) < 1:
             debug_print('Failed to set timestamp of book:', book)
-        self.db.set_field('timestamp', bookIdToValMap)
+        self.dbAPI.set_field('timestamp', bookIdToValMap)
     
     def findIdenticalBooksForBooksWithMultipleAuthors(self, book):
         authorsList = book.authors
         if len(authorsList) < 2:
-            return self.db.find_identical_books(book)
+            return self.dbAPI.find_identical_books(book)
         # Try matching the authors one by one
         identicalBookIds = set()
         for author in authorsList:
             singleAuthorBook = Metadata(book.title, [author])
-            singleAuthorIdenticalBookIds = self.db.find_identical_books(singleAuthorBook)
+            singleAuthorIdenticalBookIds = self.dbAPI.find_identical_books(singleAuthorBook)
             identicalBookIds = identicalBookIds.union(singleAuthorIdenticalBookIds)
         return identicalBookIds
 
@@ -289,9 +295,9 @@ class OpdsBooksModel(QAbstractTableModel):
     filterBooksThatAreNewspapers = False
     filterBooksThatAreAlreadyInLibrary = False
     
-    def __init__(self, parent, books = [], db = None):
+    def __init__(self, parent, books = [], db: Cache=None):
         QAbstractTableModel.__init__(self, parent)
-        self.db = db
+        self.dbAPI = db
         self.books = self.makeMetadataFromParsedOpds(books)
         self.filterBooks()
     
@@ -304,10 +310,10 @@ class OpdsBooksModel(QAbstractTableModel):
             return None
         return self.column_headers[section]
     
-    def rowCount(self, parent):
+    def rowCount(self, parent) -> int:
         return len(self.filteredBooks)
     
-    def columnCount(self, parent):
+    def columnCount(self, parent) -> int:
         return self.booktableColumnCount
     
     def data(self, index, role):
@@ -332,7 +338,7 @@ class OpdsBooksModel(QAbstractTableModel):
             return opdsBook.timestamp
         return None
     
-    def downloadOpdsRootCatalog(self, gui, opdsUrl, displayDialogOnErrors):
+    def downloadOpdsRootCatalog(self, gui, opdsUrl, displayDialogOnErrors) -> Tuple[str, Dict]:
         feed = feedparser.parse(opdsUrl)
         if 'bozo_exception' in feed:
             exception = feed['bozo_exception']
@@ -370,7 +376,7 @@ class OpdsBooksModel(QAbstractTableModel):
             QCoreApplication.processEvents()
             nextUrl = self.findNextUrl(nextFeed.feed)
     
-    def isCalibreOpdsServer(self):
+    def isCalibreOpdsServer(self) -> bool:
         return self.serverHeader.startswith('calibre')
     
     def setFilterBooksThatAreAlreadyInLibrary(self, value):
@@ -383,7 +389,7 @@ class OpdsBooksModel(QAbstractTableModel):
             self.filterBooksThatAreNewspapers = value
             self.filterBooks()
     
-    def filterBooks(self):
+    def filterBooks(self) -> bool:
         self.beginResetModel()
         self.filteredBooks = []
         for book in self.books:
@@ -391,25 +397,25 @@ class OpdsBooksModel(QAbstractTableModel):
                 self.filteredBooks.append(book)
         self.endResetModel()
     
-    def isFilteredNews(self, book):
+    def isFilteredNews(self, book) -> bool:
         if self.filterBooksThatAreNewspapers:
             if u'News' in book.tags:
                 return True
         return False
     
-    def isFilteredAlreadyInLibrary(self, book):
+    def isFilteredAlreadyInLibrary(self, book) -> bool:
         if self.filterBooksThatAreAlreadyInLibrary:
-            return self.db.has_book(book)
+            return self.dbAPI.has_book(book)
         return False
     
-    def makeMetadataFromParsedOpds(self, books):
+    def makeMetadataFromParsedOpds(self, books) -> List[Metadata]:
         metadatalist = []
         for book in books:
             metadata = self.opdsToMetadata(book)
             metadatalist.append(metadata)
         return metadatalist
     
-    def opdsToMetadata(self, opdsBookStructure):
+    def opdsToMetadata(self, opdsBookStructure) -> Metadata:
         authors = opdsBookStructure.author.replace(u'& ', u'&') if 'author' in opdsBookStructure else ''
         metadata = Metadata(opdsBookStructure.title, authors.split(u'&'))
         metadata.uuid = opdsBookStructure.id.replace('urn:uuid:', '', 1) if 'id' in opdsBookStructure else ''
@@ -441,7 +447,7 @@ class OpdsBooksModel(QAbstractTableModel):
         metadata.links = bookDownloadUrls
         return metadata
     
-    def findNextUrl(self, feed):
+    def findNextUrl(self, feed) -> str:
         for link in feed.links:
             if link.rel == u'next':
                 return link.href
