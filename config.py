@@ -37,7 +37,6 @@ class TEXT:
     HIDE_BOOK = _('Hide books already in library')
 
 PREFS = PREFS_json()
-
 PREFS.defaults[KEY.OPDS_URL] = ['http://localhost:8080/opds']
 PREFS.defaults[KEY.HIDE_NEWSPAPERS] = True
 PREFS.defaults[KEY.HIDE_BOOK] = True
