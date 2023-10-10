@@ -3,7 +3,7 @@
 ## [2.2.2] - date
 
 ### Changed
-- Drop Python 2 / Calibre 4 comatibility, only 5 and above
+- Drop Python 2 / Calibre 4 compatibility, only Calibre 5 and above
 
 ## [2.2.1] - 2022/10/20
 

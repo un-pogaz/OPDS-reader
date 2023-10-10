@@ -2,7 +2,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-09-30 08:10+0200\n"
+"POT-Creation-Date: 2023-10-08 13:52+0200\n"
 "PO-Revision-Date: 2020-10-12 14:49+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -11,7 +11,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 3.3.2\n"
+"X-Generator: Poedit 3.4\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-SearchPath-0: __init__.py\n"
 "X-Poedit-SearchPath-1: action.py\n"
@@ -21,62 +21,62 @@ msgstr ""
 msgid "Import the books from a OPDS catalog"
 msgstr ""
 
-#: action.py:61
+#: action.py:62
 msgid "Run the OPDS client UI"
 msgstr ""
 
-#: action.py:118
+#: action.py:124
 msgid "Load OPDS"
 msgstr ""
 
-#: action.py:130
+#: action.py:136
 msgid "OPDS Catalog:"
 msgstr ""
 
-#: action.py:141
+#: action.py:147
 msgid "Catalog to URL"
 msgstr ""
 
-#: action.py:155
+#: action.py:161
 msgid "Search"
 msgstr ""
 
-#: action.py:178
+#: action.py:184
 msgid "Download selected books"
 msgstr ""
 
-#: action.py:192
+#: action.py:198
 msgid "Fix timestamps of selection"
 msgstr ""
 
-#: action.py:287
+#: action.py:293
 msgid "Title"
 msgstr ""
 
-#: action.py:287
+#: action.py:293
 msgid "Author(s)"
 msgstr ""
 
-#: action.py:287
+#: action.py:293
 msgid "Updated"
 msgstr ""
 
-#: action.py:339
+#: action.py:345
 msgid "Failed opening the OPDS URL {:s}:"
 msgstr ""
 
-#: action.py:341
+#: action.py:347
 msgid "Failed opening the OPDS URL"
 msgstr ""
 
-#: config.py:34
+#: config.py:35
 msgid "OPDS URL:"
 msgstr ""
 
-#: config.py:35
+#: config.py:36
 msgid "Hide Newspapers"
 msgstr ""
 
-#: config.py:36
+#: config.py:37
 msgid "Hide books already in library"
 msgstr ""
