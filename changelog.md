@@ -1,6 +1,6 @@
 # Changelog - OPDS Reader
 
-## [2.2.2] - date
+## [2.3.0] - 2023/11/17
 
 ### Changed
 - Drop Python 2 / Calibre 4 compatibility, only Calibre 5 and above
