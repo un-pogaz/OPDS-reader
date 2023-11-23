@@ -1,9 +1,7 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 __license__   = 'GPL v3'
 __copyright__ = '2015, Steinar Bang ; 2020, un_pogaz <un.pogaz@gmail.com>'
-__docformat__ = 'restructuredtext en'
 
 
 try:
@@ -331,7 +329,7 @@ class OpdsBooksModel(QAbstractTableModel):
         if col == 0:
             return opdsBook.title
         if col == 1:
-            return u' & '.join(opdsBook.author)
+            return ' & '.join(opdsBook.author)
         if col == 2:
             if opdsBook.timestamp is not None:
                 return opdsBook.timestamp.strftime('%Y-%m-%d %H:%M:%S')
@@ -399,7 +397,7 @@ class OpdsBooksModel(QAbstractTableModel):
     
     def isFilteredNews(self, book) -> bool:
         if self.filterBooksThatAreNewspapers:
-            if u'News' in book.tags:
+            if 'News' in book.tags:
                 return True
         return False
     
@@ -416,20 +414,20 @@ class OpdsBooksModel(QAbstractTableModel):
         return metadatalist
     
     def opdsToMetadata(self, opdsBookStructure) -> Metadata:
-        authors = opdsBookStructure.author.replace(u'& ', u'&') if 'author' in opdsBookStructure else ''
-        metadata = Metadata(opdsBookStructure.title, authors.split(u'&'))
+        authors = opdsBookStructure.author.replace('& ', '&') if 'author' in opdsBookStructure else ''
+        metadata = Metadata(opdsBookStructure.title, authors.split('&'))
         metadata.uuid = opdsBookStructure.id.replace('urn:uuid:', '', 1) if 'id' in opdsBookStructure else ''
         rawTimestamp = opdsBookStructure.updated
         metadata.timestamp = parse_timestamp(rawTimestamp)
         tags = []
-        summary = opdsBookStructure.get(u'summary', u'')
+        summary = opdsBookStructure.get('summary', '')
         summarylines = summary.splitlines()
         for summaryline in summarylines:
-            if summaryline.startswith(u'TAGS: '):
-                tagsline = summaryline.replace(u'TAGS: ', u'')
-                tagsline = tagsline.replace(u'<br />',u'')
-                tagsline = tagsline.replace(u', ', u',')
-                tags = tagsline.split(u',')
+            if summaryline.startswith('TAGS: '):
+                tagsline = summaryline.replace('TAGS: ', '')
+                tagsline = tagsline.replace('<br />','')
+                tagsline = tagsline.replace(', ', ',')
+                tags = tagsline.split(',')
         metadata.tags = tags
         bookDownloadUrls = []
         links = opdsBookStructure.get('links', [])
@@ -449,7 +447,7 @@ class OpdsBooksModel(QAbstractTableModel):
     
     def findNextUrl(self, feed) -> str:
         for link in feed.links:
-            if link.rel == u'next':
+            if link.rel == 'next':
                 return link.href
         return None
     

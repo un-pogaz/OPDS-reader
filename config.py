@@ -1,9 +1,7 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 __license__   = 'GPL v3'
 __copyright__ = '2015, Steinar Bang ; 2020, un_pogaz <un.pogaz@gmail.com>'
-__docformat__ = 'restructuredtext en'
 
 
 try:
@@ -48,7 +46,7 @@ def saveOpdsUrlCombobox(opdsUrlEditor) -> List[str]:
     opdsUrls = []
     debug_print('item count:', opdsUrlEditor.count())
     for i in range(opdsUrlEditor.count()):
-        debug_print('item {:d}: {:s}'.format(i, opdsUrlEditor.itemText(i)))
+        debug_print(f'item {i:d}: {opdsUrlEditor.itemText(i):s}')
         opdsUrls.append(opdsUrlEditor.itemText(i))
     # Move the selected item first in the list
     currentSelectedUrlIndex = opdsUrlEditor.currentIndex()
