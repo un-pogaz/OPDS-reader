@@ -63,7 +63,6 @@ class OpdsReaderAction(InterfaceAction):
     dont_add_to = frozenset(['context-menu-device'])
     
     def genesis(self):
-        self.is_library_selected = True
         self.qaction.setIcon(get_icon(PLUGIN_ICON))
         self.qaction.triggered.connect(self.show_dialog)
     
