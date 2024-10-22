@@ -90,7 +90,10 @@ class OpdsBooksModel(QAbstractTableModel):
                 reason = str(exception.reason)
             error_dialog(gui, _('Failed opening the OPDS URL'), message, reason, displayDialogOnErrors)
             return (None, {})
-        self.serverHeader = feed.headers['server']
+        if 'server' in feed.headers:
+            self.serverHeader = feed.headers['server']
+        else:
+            self.serverHeader = "none"
         print("serverHeader: %s" % self.serverHeader)
         print("feed.entries: %s" % feed.entries)
         catalogEntries = {}
@@ -163,7 +166,10 @@ class OpdsBooksModel(QAbstractTableModel):
         authors = opdsBookStructure.author.replace(u'& ', u'&') if 'author' in opdsBookStructure else ''
         metadata = Metadata(opdsBookStructure.title, authors.split(u'&'))
         metadata.uuid = opdsBookStructure.id.replace('urn:uuid:', '', 1) if 'id' in opdsBookStructure else ''
-        rawTimestamp = opdsBookStructure.updated
+        try:
+            rawTimestamp = opdsBookStructure.updated
+        except AttributeError:
+            rawTimestamp = "1980-01-01T00:00:00+00:00"
         metadata.timestamp = parse_timestamp(rawTimestamp)
         tags = []
         summary = opdsBookStructure.get(u'summary', u'')
@@ -186,7 +192,7 @@ class OpdsBooksModel(QAbstractTableModel):
                     # EPUB books are preferred and always put at the head of the list if found
                     bookDownloadUrls.insert(0, url)
                 else:
-                    # Formats other than EPUB (like AZW), are appended as they are found
+                    # Formats other than EPUB (eg. AZW), are appended as they are found
                     bookDownloadUrls.append(url)
         metadata.links = bookDownloadUrls
         return metadata
