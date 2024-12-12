@@ -7,7 +7,7 @@ __copyright__ = '2015, Steinar Bang ; 2020, un_pogaz <un.pogaz@gmail.com>'
 try:
     load_translations()
 except NameError:
-    pass # load_translations() added in calibre 1.9
+    pass  # load_translations() added in calibre 1.9
 
 try:
     from qt.core import QCheckBox, QComboBox, QGridLayout, QLabel, QWidget

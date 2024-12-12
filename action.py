@@ -7,7 +7,7 @@ __copyright__ = '2015, Steinar Bang ; 2020, un_pogaz <un.pogaz@gmail.com>'
 try:
     load_translations()
 except NameError:
-    pass # load_translations() added in calibre 1.9
+    pass  # load_translations() added in calibre 1.9
 
 import datetime
 import json
@@ -146,10 +146,14 @@ class OpdsDialog(Dialog):
         
         # Initially download the catalogs found in the root catalog of the URL
         # selected at startup.  Fail quietly on failing to open the URL
-        firstCatalogTitle, catalogsList = self.model.downloadOpdsRootCatalog(self.gui, self.opdsUrlEditor.currentText(), False)
+        firstCatalogTitle, catalogsList = self.model.downloadOpdsRootCatalog(
+            self.gui,
+            self.opdsUrlEditor.currentText(),
+            False,
+        )
         #debug_print(firstCatalogTitle, catalogsList)
         firstCatalogTitle = firstCatalogTitle
-        self.currentOpdsCatalogs = catalogsList # A dictionary of title->feedURL
+        self.currentOpdsCatalogs = catalogsList  # A dictionary of title->feedURL
         
         self.opdsCatalogSelectorLabel = QLabel(_('OPDS Catalog:'))
         self.layout.addWidget(self.opdsCatalogSelectorLabel, 1, 0)
@@ -228,8 +232,12 @@ class OpdsDialog(Dialog):
     
     def opdsUrlEditorActivated(self, text):
         PREFS[KEY.OPDS_URL] = saveOpdsUrlCombobox(self.opdsUrlEditor)
-        firstCatalogTitle, catalogsList = self.model.downloadOpdsRootCatalog(self.gui, self.opdsUrlEditor.currentText(), True)
-        self.currentOpdsCatalogs = catalogsList # A dictionary of title->feedURL
+        firstCatalogTitle, catalogsList = self.model.downloadOpdsRootCatalog(
+            self.gui,
+            self.opdsUrlEditor.currentText(),
+            True,
+        )
+        self.currentOpdsCatalogs = catalogsList  # A dictionary of title->feedURL
         self.opdsCatalogSelectorModel.setStringList(self.currentOpdsCatalogs.keys())
         self.opdsCatalogSelector.setCurrentText(firstCatalogTitle)
     
@@ -498,7 +506,14 @@ class OpdsBooksModel(QAbstractTableModel):
         calibreRestSearchResponse = urlopen(calibreRestSearchUrl)
         calibreRestSearchJsonResponse = json.load(calibreRestSearchResponse)
         getAllIdsArgument = 'num=' + str(calibreRestSearchJsonResponse['total_num']) + '&offset=0'
-        parsedCalibreRestSearchUrl = ParseResult(parsedOpdsUrl.scheme, parsedOpdsUrl.netloc, '/ajax/search', '', getAllIdsArgument, '').geturl()
+        parsedCalibreRestSearchUrl = ParseResult(
+            parsedOpdsUrl.scheme,
+            parsedOpdsUrl.netloc,
+            '/ajax/search',
+            '',
+            getAllIdsArgument,
+            '',
+        ).geturl()
         calibreRestSearchResponse = urlopen(parsedCalibreRestSearchUrl)
         calibreRestSearchJsonResponse = json.load(calibreRestSearchResponse)
         bookIds = list(map(str, calibreRestSearchJsonResponse['book_ids']))
@@ -506,7 +521,14 @@ class OpdsBooksModel(QAbstractTableModel):
         # Get the metadata for all books by adding the list of
         # all IDs as a GET argument
         bookIdsGetArgument = 'ids=' + ','.join(bookIds)
-        parsedCalibreRestBooksUrl = ParseResult(parsedOpdsUrl.scheme, parsedOpdsUrl.netloc, '/ajax/books', '', bookIdsGetArgument, '')
+        parsedCalibreRestBooksUrl = ParseResult(
+            parsedOpdsUrl.scheme,
+            parsedOpdsUrl.netloc,
+            '/ajax/books',
+            '',
+            bookIdsGetArgument,
+            '',
+        )
         calibreRestBooksResponse = urlopen(parsedCalibreRestBooksUrl.geturl())
         booksDictionary = json.load(calibreRestBooksResponse)
         self.updateTimestampInMetadata(bookIds, booksDictionary)
