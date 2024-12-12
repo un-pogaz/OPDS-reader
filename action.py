@@ -9,42 +9,63 @@ try:
 except NameError:
     pass # load_translations() added in calibre 1.9
 
-import sys
+import datetime
 import json
 import re
-import datetime
 from typing import Dict, List, Tuple
+from urllib.parse import ParseResult, urlparse
 
 # For Python 3.0 and later
 from urllib.request import urlopen
-from urllib.parse import urlparse, ParseResult
 
 try:
     from qt.core import (
-        Qt, QAbstractItemView, QAbstractTableModel, QCheckBox,
-        QComboBox, QCoreApplication, QGridLayout, QHeaderView, QLabel,
-        QLineEdit, QPushButton, QSortFilterProxyModel, QStringListModel, QTableView,
+        QAbstractItemView,
+        QAbstractTableModel,
+        QCheckBox,
+        QComboBox,
+        QCoreApplication,
+        QGridLayout,
+        QHeaderView,
+        QLabel,
+        QLineEdit,
+        QPushButton,
+        QSortFilterProxyModel,
+        QStringListModel,
+        Qt,
+        QTableView,
         QToolButton,
     )
     ResizeMode = QHeaderView.ResizeMode
 except ImportError:
     from PyQt5.Qt import (
-        Qt, QAbstractItemView, QAbstractTableModel, QCheckBox,
-        QComboBox, QCoreApplication, QGridLayout, QHeaderView, QLabel,
-        QLineEdit, QPushButton, QSortFilterProxyModel, QStringListModel, QTableView,
+        QAbstractItemView,
+        QAbstractTableModel,
+        QCheckBox,
+        QComboBox,
+        QCoreApplication,
+        QGridLayout,
+        QHeaderView,
+        QLabel,
+        QLineEdit,
+        QPushButton,
+        QSortFilterProxyModel,
+        QStringListModel,
+        Qt,
+        QTableView,
         QToolButton,
     )
     from PyQt5.Qt import QHeaderView as ResizeMode
 
-from calibre.ebooks.metadata.book.base import Metadata
 from calibre.db.cache import Cache
-from calibre.gui2.actions import InterfaceAction
+from calibre.ebooks.metadata.book.base import Metadata
 from calibre.gui2 import error_dialog
+from calibre.gui2.actions import InterfaceAction
 from calibre.gui2.widgets2 import Dialog
 from calibre.web.feeds import feedparser
 
-from .config import PREFS, KEY, TEXT, PLUGIN_ICON, saveOpdsUrlCombobox
-from .common_utils import debug_print, get_icon, PLUGIN_NAME, GUI, current_db
+from .common_utils import GUI, PLUGIN_NAME, current_db, debug_print, get_icon
+from .config import KEY, PLUGIN_ICON, PREFS, TEXT, saveOpdsUrlCombobox
 
 
 def parse_timestamp(rawTimestamp):
