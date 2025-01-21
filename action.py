@@ -72,8 +72,10 @@ def parse_timestamp(rawTimestamp):
     parsableTimestamp = re.sub(r'((\.\d+)?(\+|-)0\d:00|Z)$', '', rawTimestamp)
     return datetime.datetime.strptime(parsableTimestamp, '%Y-%m-%dT%H:%M:%S')
 
+
 class DynamicBook(dict):
     pass
+
 
 class OpdsReaderAction(InterfaceAction):
     
@@ -151,7 +153,7 @@ class OpdsDialog(Dialog):
             self.opdsUrlEditor.currentText(),
             False,
         )
-        #debug_print(firstCatalogTitle, catalogsList)
+        # debug_print(firstCatalogTitle, catalogsList)
         firstCatalogTitle = firstCatalogTitle
         self.currentOpdsCatalogs = catalogsList  # A dictionary of title->feedURL
         
@@ -226,7 +228,7 @@ class OpdsDialog(Dialog):
     
     def resizeRowHeight(self):
         rowHeight = self.library_view.horizontalHeader().height()
-        for rowNumber in range(0, self.library_view.model().rowCount()):
+        for rowNumber in range(self.library_view.model().rowCount()):
             self.library_view.setRowHeight(rowNumber, rowHeight)
         self.library_view.sortByColumn(-1, Qt.AscendingOrder)
     
@@ -315,13 +317,14 @@ class OpdsDialog(Dialog):
             identicalBookIds = identicalBookIds.union(singleAuthorIdenticalBookIds)
         return identicalBookIds
 
+
 class OpdsBooksModel(QAbstractTableModel):
     column_headers = [_('Title'), _('Author(s)'), _('Updated')]
     booktableColumnCount = 3
     filterBooksThatAreNewspapers = False
     filterBooksThatAreAlreadyInLibrary = False
     
-    def __init__(self, parent, books = [], db: Cache=None):
+    def __init__(self, parent, books=[], db: Cache=None):
         QAbstractTableModel.__init__(self, parent)
         self.dbAPI = db
         self.books = self.makeMetadataFromParsedOpds(books)
@@ -375,7 +378,7 @@ class OpdsBooksModel(QAbstractTableModel):
         if 'server' in feed.headers:
             self.serverHeader = feed.headers['server']
         else:
-            self.serverHeader = "none"
+            self.serverHeader = 'none'
         debug_print('serverHeader:', self.serverHeader)
         debug_print('feed.entries:', len(feed.entries), [e['title'] for e in feed.entries])
         catalogEntries = {}
@@ -451,7 +454,7 @@ class OpdsBooksModel(QAbstractTableModel):
         try:
             rawTimestamp = opdsBookStructure.updated
         except AttributeError:
-            rawTimestamp = "1980-01-01T00:00:00+00:00"
+            rawTimestamp = '1980-01-01T00:00:00+00:00'
         metadata.timestamp = parse_timestamp(rawTimestamp)
         tags = []
         summary = opdsBookStructure.get('summary', '')

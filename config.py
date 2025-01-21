@@ -20,15 +20,18 @@ from .common_utils import PREFS_json, debug_print
 
 PLUGIN_ICON = 'images/plugin.png'
 
+
 class KEY:
     OPDS_URL = 'opds_url'
     HIDE_NEWSPAPERS = 'hideNewspapers'
     HIDE_BOOK = 'hideBooksAlreadyInLibrary'
 
+
 class TEXT:
     OPDS_URL = _('OPDS URL:')
     HIDE_NEWSPAPERS = _('Hide Newspapers')
     HIDE_BOOK = _('Hide books already in library')
+
 
 PREFS = PREFS_json()
 PREFS.defaults[KEY.OPDS_URL] = ['http://localhost:8080/opds']
@@ -37,6 +40,7 @@ PREFS.defaults[KEY.HIDE_BOOK] = True
 
 if PREFS.defaults[KEY.OPDS_URL][0] not in PREFS[KEY.OPDS_URL]:
     PREFS[KEY.OPDS_URL] = PREFS[KEY.OPDS_URL] + PREFS.defaults[KEY.OPDS_URL]
+
 
 def saveOpdsUrlCombobox(opdsUrlEditor) -> List[str]:
     opdsUrls = []
@@ -51,6 +55,7 @@ def saveOpdsUrlCombobox(opdsUrlEditor) -> List[str]:
         del opdsUrls[currentSelectedUrlIndex]
         opdsUrls.insert(0, currentUrl)
     return opdsUrls
+
 
 class ConfigWidget(QWidget):
     def __init__(self):
