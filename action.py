@@ -512,9 +512,10 @@ class OpdsBooksModel(QAbstractTableModel):
         return metadata
     
     def findNextUrl(self, feed) -> str:
-        for link in feed.links:
-            if link.rel == 'next':
-                return urljoin(self.base_url, link.href)
+        links = feed.get('links', [])
+        for link in links:
+            if link.get('rel') == 'next':
+                return urljoin(self.base_url, link.get('href'))
         return None
     
     def downloadMetadataUsingCalibreRestApi(self, opdsUrl):
