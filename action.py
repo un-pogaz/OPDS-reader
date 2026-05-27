@@ -13,7 +13,7 @@ import datetime
 import json
 import re
 from typing import Dict, List, Tuple
-from urllib.parse import ParseResult, urlparse
+from urllib.parse import ParseResult, urlparse, urljoin
 
 # For Python 3.0 and later
 from urllib.request import urlopen
@@ -137,6 +137,7 @@ class OpdsDialog(Dialog):
         self.opdsUrlEditor.activated.connect(self.opdsUrlEditorActivated)
         self.opdsUrlEditor.addItems(PREFS[KEY.OPDS_URL])
         self.opdsUrlEditor.setEditable(True)
+        self.opdsUrlEditor.lineEdit().returnPressed.connect(lambda: self.opdsUrlEditorActivated(self.opdsUrlEditor.currentText()))
         self.opdsUrlEditor.setInsertPolicy(QComboBox.InsertAtTop)
         self.layout.addWidget(self.opdsUrlEditor, 0, 1, 1, 3)
         self.opdsUrlLabel.setBuddy(self.opdsUrlEditor)
@@ -259,7 +260,10 @@ class OpdsDialog(Dialog):
     def download_opds(self):
         opdsCatalogUrl = self.currentOpdsCatalogs.get(self.opdsCatalogSelector.currentText(), None)
         if not opdsCatalogUrl:
-            return
+            self.opdsUrlEditorActivated(self.opdsUrlEditor.currentText())
+            opdsCatalogUrl = self.currentOpdsCatalogs.get(self.opdsCatalogSelector.currentText(), None)
+            if not opdsCatalogUrl:
+                return
         self.model.downloadOpdsCatalog(self.gui, opdsCatalogUrl)
         if self.model.isCalibreOpdsServer():
             self.model.downloadMetadataUsingCalibreRestApi(self.opdsUrlEditor.currentText())
@@ -368,6 +372,7 @@ class OpdsBooksModel(QAbstractTableModel):
         return None
     
     def downloadOpdsRootCatalog(self, gui, opdsUrl, displayDialogOnErrors) -> Tuple[str, Dict]:
+        self.base_url = opdsUrl
         feed = feedparser.parse(opdsUrl)
         if 'bozo_exception' in feed:
             exception = feed['bozo_exception']
@@ -381,6 +386,17 @@ class OpdsBooksModel(QAbstractTableModel):
             self.serverHeader = 'none'
         debug_print('serverHeader:', self.serverHeader)
         debug_print('feed.entries:', len(feed.entries), [e['title'] for e in feed.entries])
+        
+        if len(feed.entries) == 0:
+            content_type = feed.headers.get('content-type', '').lower()
+            if 'text/html' in content_type:
+                msg = _('OPDS Reader received an HTML page instead of an XML feed. This usually indicates that the server redirected the request to a login screen (common with Calibre-Web instances).\n\nPlease verify that "Anonymous Browsing" is enabled in Calibre-Web, or check your authentication credentials.')
+                debug_print('WARNING: OPDS Reader received an HTML response instead of an XML feed.')
+                debug_print('WARNING: This usually indicates a redirect to a login screen (e.g. Calibre-Web).')
+                debug_print('WARNING: Please check if "Anonymous Browsing" is enabled in your server configuration.')
+                if displayDialogOnErrors:
+                    error_dialog(gui, _('HTML Response Received'), msg, show=True)
+                    
         catalogEntries = {}
         firstTitle = None
         for entry in feed.entries:
@@ -390,13 +406,26 @@ class OpdsBooksModel(QAbstractTableModel):
             links = entry.get('links', [])
             firstLink = next(iter(links), None)
             if firstLink is not None:
-                debug_print(f'firstLink: {title} "{firstLink.href}"')
-                catalogEntries[title] = firstLink.href
+                resolved_url = urljoin(self.base_url, firstLink.href)
+                debug_print(f'firstLink: {title} "{resolved_url}"')
+                catalogEntries[title] = resolved_url
         return firstTitle, catalogEntries
     
     def downloadOpdsCatalog(self, gui, opdsCatalogUrl):
+        self.base_url = opdsCatalogUrl
         debug_print('Downloading catalog:', opdsCatalogUrl)
         opdsCatalogFeed = feedparser.parse(opdsCatalogUrl)
+        
+        if len(opdsCatalogFeed.entries) == 0:
+            content_type = opdsCatalogFeed.headers.get('content-type', '').lower()
+            if 'text/html' in content_type:
+                msg = _('OPDS Reader received an HTML page instead of an XML feed. This usually indicates that the server redirected the request to a login screen (common with Calibre-Web instances).\n\nPlease verify that "Anonymous Browsing" is enabled in Calibre-Web, or check your authentication credentials.')
+                debug_print('WARNING: OPDS Reader received an HTML response instead of an XML feed.')
+                debug_print('WARNING: This usually indicates a redirect to a login screen (e.g. Calibre-Web).')
+                debug_print('WARNING: Please check if "Anonymous Browsing" is enabled in your server configuration.')
+                error_dialog(gui, _('HTML Response Received'), msg, show=True)
+                return
+                
         self.books = self.makeMetadataFromParsedOpds(opdsCatalogFeed.entries)
         self.filterBooks()
         QCoreApplication.processEvents()
@@ -469,7 +498,7 @@ class OpdsBooksModel(QAbstractTableModel):
         bookDownloadUrls = []
         links = opdsBookStructure.get('links', [])
         for link in links:
-            url = link.get('href', '')
+            url = urljoin(self.base_url, link.get('href', ''))
             bookType = link.get('type', '')
             # Skip covers and thumbnails
             if not bookType.startswith('image/'):
@@ -483,9 +512,10 @@ class OpdsBooksModel(QAbstractTableModel):
         return metadata
     
     def findNextUrl(self, feed) -> str:
-        for link in feed.links:
-            if link.rel == 'next':
-                return link.href
+        links = feed.get('links', [])
+        for link in links:
+            if link.get('rel') == 'next':
+                return urljoin(self.base_url, link.get('href'))
         return None
     
     def downloadMetadataUsingCalibreRestApi(self, opdsUrl):
