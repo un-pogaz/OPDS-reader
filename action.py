@@ -13,7 +13,7 @@ import datetime
 import json
 import re
 from typing import Dict, List, Tuple
-from urllib.parse import ParseResult, urlparse, urljoin
+from urllib.parse import ParseResult, urljoin, urlparse
 
 # For Python 3.0 and later
 from urllib.request import urlopen
@@ -137,7 +137,7 @@ class OpdsDialog(Dialog):
         self.opdsUrlEditor.activated.connect(self.opdsUrlEditorActivated)
         self.opdsUrlEditor.addItems(PREFS[KEY.OPDS_URL])
         self.opdsUrlEditor.setEditable(True)
-        self.opdsUrlEditor.lineEdit().returnPressed.connect(lambda: self.opdsUrlEditorActivated(self.opdsUrlEditor.currentText()))
+        self.opdsUrlEditor.lineEdit().returnPressed.connect(self.opdsUrlEditorActivated)
         self.opdsUrlEditor.setInsertPolicy(QComboBox.InsertAtTop)
         self.layout.addWidget(self.opdsUrlEditor, 0, 1, 1, 3)
         self.opdsUrlLabel.setBuddy(self.opdsUrlEditor)
@@ -233,7 +233,7 @@ class OpdsDialog(Dialog):
             self.library_view.setRowHeight(rowNumber, rowHeight)
         self.library_view.sortByColumn(-1, Qt.AscendingOrder)
     
-    def opdsUrlEditorActivated(self, text):
+    def opdsUrlEditorActivated(self, text=None):
         PREFS[KEY.OPDS_URL] = saveOpdsUrlCombobox(self.opdsUrlEditor)
         firstCatalogTitle, catalogsList = self.model.downloadOpdsRootCatalog(
             self.gui,
@@ -260,7 +260,7 @@ class OpdsDialog(Dialog):
     def download_opds(self):
         opdsCatalogUrl = self.currentOpdsCatalogs.get(self.opdsCatalogSelector.currentText(), None)
         if not opdsCatalogUrl:
-            self.opdsUrlEditorActivated(self.opdsUrlEditor.currentText())
+            self.opdsUrlEditorActivated()
             opdsCatalogUrl = self.currentOpdsCatalogs.get(self.opdsCatalogSelector.currentText(), None)
             if not opdsCatalogUrl:
                 return
@@ -322,6 +322,26 @@ class OpdsDialog(Dialog):
         return identicalBookIds
 
 
+def test_error_feed(gui, feed, show=True):
+    if len(feed.entries) == 0:
+        content_type = feed.headers.get('content-type', '').lower()
+        if 'text/html' in content_type:
+            msg = _(
+                'OPDS Reader received an HTML page instead of an XML feed. '
+                'This usually indicates that the server redirected the request to a login screen '
+                '(common with Calibre-Web instances).\n\n'
+                'Please verify that "Anonymous Browsing" is enabled in Calibre-Web, '
+                'or check your authentication credentials.'
+            )
+            debug_print('WARNING: OPDS Reader received an HTML response instead of an XML feed.')
+            debug_print('WARNING: This usually indicates a redirect to a login screen (e.g. Calibre-Web).')
+            debug_print('WARNING: Please check if "Anonymous Browsing" is enabled in your server configuration.')
+            if show:
+                error_dialog(gui, _('HTML Response Received'), msg, show=True)
+            return True
+    return False
+
+
 class OpdsBooksModel(QAbstractTableModel):
     column_headers = [_('Title'), _('Author(s)'), _('Updated')]
     booktableColumnCount = 3
@@ -332,6 +352,7 @@ class OpdsBooksModel(QAbstractTableModel):
         QAbstractTableModel.__init__(self, parent)
         self.dbAPI = db
         self.books = self.makeMetadataFromParsedOpds(books)
+        self.base_url = None
         self.filterBooks()
     
     def headerData(self, section, orientation, role):
@@ -387,16 +408,9 @@ class OpdsBooksModel(QAbstractTableModel):
         debug_print('serverHeader:', self.serverHeader)
         debug_print('feed.entries:', len(feed.entries), [e['title'] for e in feed.entries])
         
-        if len(feed.entries) == 0:
-            content_type = feed.headers.get('content-type', '').lower()
-            if 'text/html' in content_type:
-                msg = _('OPDS Reader received an HTML page instead of an XML feed. This usually indicates that the server redirected the request to a login screen (common with Calibre-Web instances).\n\nPlease verify that "Anonymous Browsing" is enabled in Calibre-Web, or check your authentication credentials.')
-                debug_print('WARNING: OPDS Reader received an HTML response instead of an XML feed.')
-                debug_print('WARNING: This usually indicates a redirect to a login screen (e.g. Calibre-Web).')
-                debug_print('WARNING: Please check if "Anonymous Browsing" is enabled in your server configuration.')
-                if displayDialogOnErrors:
-                    error_dialog(gui, _('HTML Response Received'), msg, show=True)
-                    
+        if test_error_feed(gui, feed, displayDialogOnErrors):
+            return
+        
         catalogEntries = {}
         firstTitle = None
         for entry in feed.entries:
@@ -416,16 +430,9 @@ class OpdsBooksModel(QAbstractTableModel):
         debug_print('Downloading catalog:', opdsCatalogUrl)
         opdsCatalogFeed = feedparser.parse(opdsCatalogUrl)
         
-        if len(opdsCatalogFeed.entries) == 0:
-            content_type = opdsCatalogFeed.headers.get('content-type', '').lower()
-            if 'text/html' in content_type:
-                msg = _('OPDS Reader received an HTML page instead of an XML feed. This usually indicates that the server redirected the request to a login screen (common with Calibre-Web instances).\n\nPlease verify that "Anonymous Browsing" is enabled in Calibre-Web, or check your authentication credentials.')
-                debug_print('WARNING: OPDS Reader received an HTML response instead of an XML feed.')
-                debug_print('WARNING: This usually indicates a redirect to a login screen (e.g. Calibre-Web).')
-                debug_print('WARNING: Please check if "Anonymous Browsing" is enabled in your server configuration.')
-                error_dialog(gui, _('HTML Response Received'), msg, show=True)
-                return
-                
+        if test_error_feed(gui, opdsCatalogFeed):
+            return
+        
         self.books = self.makeMetadataFromParsedOpds(opdsCatalogFeed.entries)
         self.filterBooks()
         QCoreApplication.processEvents()
