@@ -1,5 +1,13 @@
 # Changelog - OPDS Reader
 
+## [2.4.0] - 2026/11/14
+
+### Changed
+- Improve relative URLs to support Calibre-Web (@JMoravec)
+
+### Fixed
+- Various fix on url parsing (@JMoravec)
+
 ## [2.3.0] - 2023/11/17
 
 ### Changed

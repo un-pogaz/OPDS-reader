@@ -46,7 +46,7 @@ def saveOpdsUrlCombobox(opdsUrlEditor) -> List[str]:
     opdsUrls = []
     debug_print('item count:', opdsUrlEditor.count())
     for i in range(opdsUrlEditor.count()):
-        debug_print(f'item {i:d}: {opdsUrlEditor.itemText(i):s}')
+        # debug_print(f'item {i:d}: {opdsUrlEditor.itemText(i):s}')
         opdsUrls.append(opdsUrlEditor.itemText(i))
     # Move the selected item first in the list
     currentSelectedUrlIndex = opdsUrlEditor.currentIndex()
